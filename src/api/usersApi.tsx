@@ -4,4 +4,8 @@ const api = axios.create({
     baseURL: "https://randomuser.me/api",
 })
 
-export const getUsers = () => api.get("/?results=20").then(response => response.data)
+type GetUserResponse = {
+    results: any[]
+}
+
+export const getUsers = () => api.get("/?results=20").then(response => response.data as GetUserResponse)

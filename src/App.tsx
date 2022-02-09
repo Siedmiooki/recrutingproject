@@ -1,8 +1,10 @@
 import { useState } from "react";
 import GlobalStyles from "./styles/GlobalStyles";
-import { AppContainerStyled, UserContainerStyled, UserDescContainerStyled, NoResultStyled, MsgPageStyled } from "./styles/PageStyles";
+import { AppContainerStyled, UserContainerStyled, UserDescContainerStyled, NoResultStyled } from "./styles/PageStyles";
 import { useQuery } from "react-query";
 import { getUsers } from "./api/usersApi";
+import { LoadingPage, ErrorPage, RefetchButton, SearchInput } from "./components";
+
 
 function App() {
 
@@ -10,41 +12,28 @@ function App() {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false
   })
+
   const [searchInput, setSearchInput] = useState("")
 
-  const filteredUsers = data?.results.filter((user: any) =>
-    user.name.first.toLowerCase().startsWith(searchInput.toLowerCase())
+  const filteredUsers = data?.results.filter((user) =>
+    user.name.first.toLocaleLowerCase().startsWith(searchInput.toLowerCase())
   );
 
   if (isLoading) {
-    return (
-      <MsgPageStyled>
-        <p>Loading...</p>
-      </MsgPageStyled>
-    )
+    return <LoadingPage />
   }
 
   if (isError) {
-    return (
-      <MsgPageStyled>
-        <p>Something went wrong</p>
-        <button onClick={() => refetch()}>Retry</button>
-      </MsgPageStyled>
-    )
+    return <ErrorPage refetch={refetch} />
   }
 
   return (
     <AppContainerStyled>
       <GlobalStyles />
-      <button onClick={() => refetch()}>{isFetching ? "Loading..." : "Load new users"}</button>
-      <input
-        type="text"
-        placeholder="Search by name..."
-        value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
-      />
+      <RefetchButton isFetching={isFetching} refetch={refetch} />
+      <SearchInput searchInput={searchInput} setSearchInput={setSearchInput} />
       {
-        data && filteredUsers.length === 0 ? <NoResultStyled>No results</NoResultStyled> :
+        filteredUsers === undefined || filteredUsers.length === 0 ? <NoResultStyled>No results</NoResultStyled> :
           filteredUsers.map((user: any) => (
             <UserContainerStyled key={user.login.uuid}>
               <img src={user.picture.medium} alt="userPicture" />
