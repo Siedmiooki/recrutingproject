@@ -1,9 +1,10 @@
 import { useState } from "react";
 import GlobalStyles from "./styles/GlobalStyles";
-import { AppContainerStyled, UserContainerStyled, UserDescContainerStyled, NoResultStyled } from "./styles/PageStyles";
+import { AppContainerStyled, NoResultStyled } from "./styles/PageStyles";
 import { useQuery } from "react-query";
 import { getUsers } from "./api/usersApi";
-import { LoadingPage, ErrorPage, RefetchButton, SearchInput } from "./components";
+import filterUsers from "./components/filterUsers";
+import { LoadingPage, ErrorPage, RefetchButton, SearchInput, UserView } from "./components";
 
 
 function App() {
@@ -15,9 +16,7 @@ function App() {
 
   const [searchInput, setSearchInput] = useState("")
 
-  const filteredUsers = data?.results.filter((user) =>
-    user.name.first.toLocaleLowerCase().startsWith(searchInput.toLowerCase())
-  );
+  const filteredUsers = filterUsers(data, searchInput)
 
   if (isLoading) {
     return <LoadingPage />
@@ -32,19 +31,9 @@ function App() {
       <GlobalStyles />
       <RefetchButton isFetching={isFetching} refetch={refetch} />
       <SearchInput searchInput={searchInput} setSearchInput={setSearchInput} />
-      {
-        filteredUsers === undefined || filteredUsers.length === 0 ? <NoResultStyled>No results</NoResultStyled> :
-          filteredUsers.map((user: any) => (
-            <UserContainerStyled key={user.login.uuid}>
-              <img src={user.picture.medium} alt="userPicture" />
-              <UserDescContainerStyled>
-                <p style={{ background: `${user.name.title === "Ms" ? "#488bb8" : null}` }}>{`${user.name.title} ${user.name.first} ${user.name.last}`}</p>
-                <p>{`email: ${user.email}`}</p>
-                <p>{`city: ${user.location.city}`}</p>
-              </UserDescContainerStyled>
-            </UserContainerStyled>
-          ))
-      }
+      {filteredUsers.length === 0 ? <NoResultStyled>No results</NoResultStyled> :
+        filteredUsers.map((user: any) =>
+          <UserView key={user.login.uuid} user={user} />)}
     </AppContainerStyled>
   );
 }

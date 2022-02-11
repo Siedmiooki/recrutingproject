@@ -1,4 +1,3 @@
-
 export default function RefetchButton(props: any) {
-    return <button onClick={() => props.refetch()}>{props.isFetching ? "Loading..." : "Load new users"}</button>;
+    return <button data-testid="refetchBtn" onClick={() => props.refetch()}>{props.isFetching ? "Loading..." : "Load new users"}</button>;
 }
