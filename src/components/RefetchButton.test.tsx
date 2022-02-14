@@ -3,13 +3,19 @@ import { RefetchButton } from ".";
 
 describe('refetchButton', () => {
 
-    test("renders btn msg", () => {
+    test("renders btn elem", () => {
         render(<RefetchButton refetch={() => { }} />);
-        const msgElement = screen.getByTestId("refetchBtn")
-        expect(msgElement).toBeInTheDocument()
+        const refetchElem = screen.getByTestId("refetchBtn")
+        expect(refetchElem).toBeInTheDocument()
     })
 
-    test("btn test", () => {
+    test("renders btn text elem", () => {
+        render(<RefetchButton refetch={() => { }} text="testText" />);
+        const refetchElem = screen.getByTestId("refetchBtn")
+        expect(refetchElem).toHaveTextContent("testText")
+    })
+
+    test("btn click test", () => {
         const refetch = jest.fn()
         render(<RefetchButton refetch={refetch} />);
 

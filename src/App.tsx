@@ -6,10 +6,10 @@ import { getUsers } from "./api/usersApi";
 import filterUsers from "./components/filterUsers";
 import { LoadingPage, ErrorPage, RefetchButton, SearchInput, UserView } from "./components";
 
-
 function App() {
 
   const { data, isLoading, isError, refetch, isFetching } = useQuery("users", getUsers, {
+    retry: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false
   })
@@ -17,6 +17,8 @@ function App() {
   const [searchInput, setSearchInput] = useState("")
 
   const filteredUsers = filterUsers(data, searchInput)
+  const refetchText = isFetching ? "Loading..." : "Load new users";
+  const noUsers = filteredUsers.length === 0;
 
   if (isLoading) {
     return <LoadingPage />
@@ -29,11 +31,10 @@ function App() {
   return (
     <AppContainerStyled>
       <GlobalStyles />
-      <RefetchButton isFetching={isFetching} refetch={refetch} />
+      <RefetchButton refetch={refetch} text={refetchText} />
       <SearchInput searchInput={searchInput} setSearchInput={setSearchInput} />
-      {filteredUsers.length === 0 ? <NoResultStyled>No results</NoResultStyled> :
-        filteredUsers.map((user: any) =>
-          <UserView key={user.login.uuid} user={user} />)}
+      {noUsers ? <NoResultStyled>No results</NoResultStyled> : filteredUsers.map((user: any) =>
+        <UserView key={user.login.uuid} user={user} />)}
     </AppContainerStyled>
   );
 }

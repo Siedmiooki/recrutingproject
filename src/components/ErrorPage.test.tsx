@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react"
+import { render, screen } from "@testing-library/react"
 import { ErrorPage } from ".";
 
 describe('errorPageComponent', () => {
@@ -9,15 +9,9 @@ describe('errorPageComponent', () => {
         expect(msgElement).toBeInTheDocument()
     })
 
-    test("btn test", () => {
-        const refetch = jest.fn()
-        render(<ErrorPage refetch={refetch} />);
-
-        const buttonElement = screen.getByTestId("refetchBtn")
-        expect(buttonElement).toBeInTheDocument();
-
-        fireEvent.click(buttonElement)
-
-        expect(refetch).toHaveBeenCalledTimes(1)
+    test("renders btn", () => {
+        render(<ErrorPage refetch={() => { }} />);
+        const refetchElem = screen.getByTestId("refetchBtn")
+        expect(refetchElem).toBeInTheDocument()
     })
 });

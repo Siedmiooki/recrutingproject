@@ -3,4 +3,3 @@ export default function filterUsers(usersData: { results: any[] } | undefined, s
         user.name.first.toLowerCase().startsWith(searchInput.toLowerCase())
     ) || [];
 }
-
